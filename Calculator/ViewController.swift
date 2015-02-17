@@ -68,14 +68,24 @@ class ViewController: UIViewController
         
     }
     
-    var displayValue: Double {
+    var displayValue: Double! {
         get {
             var numberFormatter = NSNumberFormatter()
             numberFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-            return numberFormatter.numberFromString(display.text!)!.doubleValue
+            let number = numberFormatter.numberFromString(display.text!)
+            if let number = numberFormatter.numberFromString(display.text!) {
+                return number.doubleValue
+            } else {
+                return nil
+            }
         }
+
         set {
-            display.text = "\(newValue)"
+            if let nv = newValue {
+                display.text = "\(nv)"
+            } else {
+                display.text = "0"
+            }
             userIsInTheMiddleOfTypingANumber = false
         }
     }
@@ -86,7 +96,9 @@ class ViewController: UIViewController
         let operation = sender.currentTitle!
         history!.text! += "\(operation)"
         if userIsInTheMiddleOfTypingANumber {
-            enter()
+            if operation != "ᐩ/-"  {
+                enter()
+            }
         }
         switch operation {
         case "×":
@@ -94,9 +106,9 @@ class ViewController: UIViewController
         case "÷":
             performOperation { $1 / $0 }
         case "+":
-            performOperation { $0 + $1 }
+                performOperation { $0 + $1 }
         case "−":
-            performOperation { $1 - $0 }
+                performOperation { $1 - $0 }
         case "√":
             performOperation { sqrt($0) }
         case "sin":
@@ -105,6 +117,19 @@ class ViewController: UIViewController
             performOperation { cos($0) }
         case "π":
             performOperation(M_PI)
+        case "ᐩ/-":
+            if(userIsInTheMiddleOfTypingANumber) {
+                let fc = first(self.display!.text!)
+                if fc == "-" {
+                    self.display!.text! = dropFirst(self.display!.text!)
+                } else
+                {
+                    self.display!.text! = "-" + self.display!.text!
+                }
+            
+            } else {
+                performOperation { -$0 }
+            }
         default:
             break;
             
@@ -137,6 +162,18 @@ class ViewController: UIViewController
         enter()
     }
     
+    @IBAction func back(sender: AnyObject)
+    {
+        let c = countElements(self.display!.text!)
+        if c == 1 {
+            self.displayValue = nil
+            userIsInTheMiddleOfTypingANumber = false
+        } else
+        if c > 0 {
+            self.display!.text = dropLast(self.display!.text!)
+        }
+    }
+    
     @IBAction func clear(sender: AnyObject) {
         operandStack = [Double]()
         display.text = "0"
@@ -147,7 +184,6 @@ class ViewController: UIViewController
         let bottom = NSMakeRange(c - 1 , 1)
         history!.scrollRangeToVisible(bottom)
     }
-    
     
 }
 
