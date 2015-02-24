@@ -230,7 +230,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="appendConstant:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AAe-bL-UId"/>
+                                    <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NXK-yp-bqt"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Fg-Xr-uHX">
