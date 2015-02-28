@@ -26,12 +26,12 @@ class ViewController: UIViewController
             display.text = digit
             userIsInTheMiddleOfTypingANumber = true
         }
-        history!.text! += "\(digit) "
-        scrollToBottom()
         println("digit = \(digit)")
     }
     
-    @IBOutlet weak var history: UITextView!
+
+    
+    @IBOutlet weak var history: UILabel!
     
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
@@ -57,6 +57,8 @@ class ViewController: UIViewController
         set {
             if let nv = newValue {
                 display.text = "\(nv)"
+                history.text = brain.description
+                
             } else {
                 display.text = "0"
             }
@@ -106,12 +108,6 @@ class ViewController: UIViewController
     @IBAction func clear(sender: AnyObject) {
         brain.clear()
         displayValue = nil
-    }
-    
-    func scrollToBottom() {
-        let c = countElements(history!.text!)
-        let bottom = NSMakeRange(c - 1 , 1)
-        history!.scrollRangeToVisible(bottom)
     }
     
 }
