@@ -62,6 +62,7 @@ class ViewController: UIViewController
             } else {
                 display.text = "0"
             }
+            
             userIsInTheMiddleOfTypingANumber = false
         }
     }
@@ -78,7 +79,7 @@ class ViewController: UIViewController
                 displayValue = nil
             }
         }
-        
+        history.text = brain.description
 //            if(userIsInTheMiddleOfTypingANumber) {
 //                let fc = first(self.display!.text!)
 //                if fc == "-" {
@@ -108,6 +109,7 @@ class ViewController: UIViewController
     @IBAction func clear(sender: AnyObject) {
         brain.clear()
         displayValue = nil
+        history.text = " "
     }
     
 }

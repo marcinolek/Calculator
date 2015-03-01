@@ -55,12 +55,21 @@ class CalculatorBrain : Printable
             }
         }
     }
-    
+
     var description: String {
         get {
-            let (_, desc, prec) = describe(opStock, descs: [""], precedence: 0)
-            let toRet = join(",", desc)
-            return toRet
+            var (result, ops) = ("", opStock)
+            while ops.count > 0 {
+                var desc: String
+                var resultString = ""
+                if let evaluationResult = evaluate(ops).result {
+                    resultString = " = \(evaluationResult)"
+                }
+                (ops, desc, _) = describe(ops, desc: "", precedence: 0)
+                
+                result = result == "" ? desc + resultString : "\(desc), \(result)"
+            }
+            return result
         }
     }
     
@@ -104,38 +113,38 @@ class CalculatorBrain : Printable
         return evaluate()
     }
     
-    private func describe(ops: [Op], descs: [String], precedence: Int) -> (remainingOps: [Op], descs: [String], prec: Int) {
+    private func describe(ops: [Op], desc: String, precedence: Int) -> (remainingOps: [Op], desc: String, prec: Int) {
         if !ops.isEmpty {
             var remainingOps = ops
             let op = remainingOps.removeLast()
            
             println("remaining ops: \(remainingOps.count)")
-            var currentDescription = descs
+            var currentDescription = desc
             switch op {
             case .Operand(let operand):
-                return (remainingOps, ["\(operand)"], op.precedence)
+                return (remainingOps, "\(operand)", op.precedence)
             case .UnaryOperation(let symbol, let operation):
-                let operandEvaluation = describe(remainingOps, descs: currentDescription, precedence: op.precedence)
-                return (operandEvaluation.remainingOps,[" \(symbol)(\(operandEvaluation.descs.last!))"],op.precedence)//))=\(operation(operand))")
+                let operandEvaluation = describe(remainingOps, desc: currentDescription, precedence: op.precedence)
+                return (operandEvaluation.remainingOps," \(symbol)(\(operandEvaluation.desc))",op.precedence)//))=\(operation(operand))")
             case .BinaryOperation(let symbol, let operation):
-                let op1Evaluation = describe(remainingOps, descs: currentDescription, precedence: op.precedence)
+                let op1Evaluation = describe(remainingOps, desc: currentDescription, precedence: op.precedence)
                 if op1Evaluation.remainingOps.count > 0 {
-                    let op2Evaluation = describe(op1Evaluation.remainingOps, descs: currentDescription, precedence: op1Evaluation.prec)
+                    let op2Evaluation = describe(op1Evaluation.remainingOps, desc: currentDescription, precedence: op1Evaluation.prec)
                     let parenthesisRequired = (precedence > op.precedence)
-                    return (op2Evaluation.remainingOps, [(parenthesisRequired ? "(" : "") + " \(op2Evaluation.descs.last!) \(symbol) \(op1Evaluation.descs.last!)" + (parenthesisRequired ? ")" : "")],op2Evaluation.prec)//" = \(operation(operand1,operand2))")
+                    return (op2Evaluation.remainingOps, (parenthesisRequired ? "(" : "") + " \(op2Evaluation.desc)\(symbol) \(op1Evaluation.desc)" + (parenthesisRequired ? ")" : ""),op2Evaluation.prec)
                 } else {
-                    return (op1Evaluation.remainingOps, [" ? \(symbol) \(op1Evaluation.descs.last!)"],op1Evaluation.prec)
+                    return (op1Evaluation.remainingOps, " ? \(symbol) \(op1Evaluation.desc)",op1Evaluation.prec)
                 }
             case .Constant(let symbol, let operation):
-                return (remainingOps, [currentDescription.last! + "\(symbol)"],op.precedence)
+                return (remainingOps, currentDescription + "\(symbol)",op.precedence)
             case .Variable(let symbol, let operation):
                 if let operand = variableValues[symbol] {
-                    return (remainingOps, [currentDescription.last! + "\(symbol)"],op.precedence)
+                    return (remainingOps, currentDescription + "\(symbol)",op.precedence)
                 }
                 
             }
         }
-        return (ops, [description], Int.max)
+        return (ops, description, Int.max)
     }
     
     private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op]) {
