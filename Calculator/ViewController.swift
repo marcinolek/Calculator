@@ -112,5 +112,14 @@ class ViewController: UIViewController
         history.text = " "
     }
     
+    @IBAction func mPressed(sender: AnyObject) {
+        displayValue = brain.pushOperand("M")
+    }
+    
+    @IBAction func setMPressed(sender: AnyObject) {
+        brain.variableValues["M"] = displayValue
+        userIsInTheMiddleOfTypingANumber = false
+        displayValue = brain.evaluate()
+    }
 }
 

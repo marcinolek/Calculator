@@ -15,7 +15,7 @@ class CalculatorBrain : Printable
         case UnaryOperation(String, Double -> Double)
         case BinaryOperation(String, (Double, Double) -> Double)
         case Constant(String, Double)
-        case Variable(String, Double)
+        case Variable(String)
         var description: String {
             get {
                 switch self {
@@ -27,7 +27,7 @@ class CalculatorBrain : Printable
                     return symbol
                 case .Constant(let symbol, _):
                     return symbol
-                case .Variable(let symbol, _):
+                case .Variable(let symbol):
                     return symbol
                 }
             }
@@ -79,6 +79,8 @@ class CalculatorBrain : Printable
     
     var variableValues = [String : Double]()
     
+    var M : Double = 0
+    
     init() {
         func learnOp(op: Op) {
             knownOps[op.description] = op
@@ -99,11 +101,8 @@ class CalculatorBrain : Printable
     }
     
     func pushOperand(symbol: String) -> Double? {
-        if let op = variableValues[symbol] {
-            opStock.append(Op.Operand(op))
-            return evaluate()
-        }
-        return nil
+        opStock.append(Op.Variable(symbol))
+        return evaluate()
     }
     
     func performOperation(symbol: String) -> Double? {
@@ -137,14 +136,11 @@ class CalculatorBrain : Printable
                 }
             case .Constant(let symbol, let operation):
                 return (remainingOps, currentDescription + "\(symbol)",op.precedence)
-            case .Variable(let symbol, let operation):
-                if let operand = variableValues[symbol] {
-                    return (remainingOps, currentDescription + "\(symbol)",op.precedence)
-                }
-                
+            case .Variable(let symbol):
+                return (remainingOps, currentDescription + "\(symbol)",op.precedence)
             }
         }
-        return (ops, description, Int.max)
+        return (ops, "?", Int.max)
     }
     
     private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op]) {
@@ -169,10 +165,11 @@ class CalculatorBrain : Printable
                 }
             case .Constant(_, let operation):
                 return (operation, remainingOps)
-            case .Variable(let symbol, _):
-                if let op = variableValues[symbol] {
-                    return (op, remainingOps)
+            case .Variable(let symbol):
+                if let op2 = variableValues[symbol] {
+                    return (op2, remainingOps)
                 }
+                return (nil, remainingOps)
                 
             }
             
