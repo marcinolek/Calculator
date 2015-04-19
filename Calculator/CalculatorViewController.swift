@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CalculatorViewController.swift
 //  Calculator
 //
 //  Created by Marcin Olek on 30.01.2015.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController
+class CalculatorViewController: UIViewController
 {
     
     @IBOutlet weak var display: UILabel!
@@ -96,7 +96,7 @@ class ViewController: UIViewController
     
     @IBAction func back(sender: AnyObject)
     {
-        let c = countElements(self.display!.text!)
+        let c = count(self.display!.text!)
         if c == 1 {
             self.displayValue = nil
             userIsInTheMiddleOfTypingANumber = false
