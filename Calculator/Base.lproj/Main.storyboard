@@ -476,6 +476,16 @@
                             <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="E52-bV-9Nc" customClass="GraphView" customModule="Calculator" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="538"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="scale">
+                                        <real key="value" value="11"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="sjv-ox-eIz" appends="YES" id="BJX-9e-McE"/>
+                                    <outletCollection property="gestureRecognizers" destination="1kd-xe-T91" appends="YES" id="ZgO-Tx-yIv"/>
+                                    <outletCollection property="gestureRecognizers" destination="YBX-vd-a05" appends="YES" id="Vx2-P1-xuR"/>
+                                </connections>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v9G-2P-lEQ">
                                 <rect key="frame" x="0.0" y="538" width="320" height="30"/>
@@ -513,6 +523,24 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ph0-uC-jx2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="YBX-vd-a05">
+                    <connections>
+                        <action selector="handleDoubleTap:" destination="E52-bV-9Nc" id="VRm-wI-rUo"/>
+                        <outlet property="delegate" destination="E52-bV-9Nc" id="Lqi-Zh-bdZ"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <pinchGestureRecognizer scale="4.0000000000000027" id="sjv-ox-eIz">
+                    <connections>
+                        <action selector="handlePinch:" destination="E52-bV-9Nc" id="z06-EY-xdd"/>
+                        <outlet property="delegate" destination="E52-bV-9Nc" id="ZXT-xP-xHk"/>
+                    </connections>
+                </pinchGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="1kd-xe-T91">
+                    <connections>
+                        <action selector="handlePan:" destination="E52-bV-9Nc" id="L6H-17-nTK"/>
+                        <outlet property="delegate" destination="E52-bV-9Nc" id="DUO-fO-IDP"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="142" y="313"/>
         </scene>
