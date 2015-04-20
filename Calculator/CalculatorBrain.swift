@@ -58,7 +58,7 @@ class CalculatorBrain : Printable
 
     var description: String {
         get {
-            var (result, ops) = ("", opStock)
+            var (result, ops) = ("", opStack)
             while ops.count > 0 {
                 var desc: String
                 var resultString = ""
@@ -73,7 +73,7 @@ class CalculatorBrain : Printable
         }
     }
     
-    private var opStock = [Op]()
+    private var opStack = [Op]()
     
     private var knownOps = [String:Op]()
     
@@ -94,20 +94,41 @@ class CalculatorBrain : Printable
         learnOp(Op.UnaryOperation("cos", cos))
         learnOp(Op.Constant("π", M_PI))
     }
+    typealias PropertyList = AnyObject
+    var program : PropertyList {
+        get {
+            return opStack.map { $0.description }
+        }
+        set {
+            if let opSymbols = newValue as? Array<String> {
+                var newOpStack = [Op]()
+                for opSymbol in opSymbols {
+                    if let op = knownOps[opSymbol] {
+                        newOpStack.append(op)
+                    } else if let variable = variableValues[opSymbol] {
+                        newOpStack.append(.Variable(opSymbol))
+                    } else if let operant = NSNumberFormatter().numberFromString(opSymbol)?.doubleValue {
+                        newOpStack.append(.Operand(operant))
+                    }
+                }
+                opStack = newOpStack
+            }
+        }
+    }
     
     func pushOperand(operand: Double) -> Double? {
-        opStock.append(Op.Operand(operand))
+        opStack.append(Op.Operand(operand))
         return evaluate()
     }
     
     func pushOperand(symbol: String) -> Double? {
-        opStock.append(Op.Variable(symbol))
+        opStack.append(Op.Variable(symbol))
         return evaluate()
     }
     
     func performOperation(symbol: String) -> Double? {
         if let operation = knownOps[symbol] {
-            opStock.append(operation)
+            opStack.append(operation)
         }
         return evaluate()
     }
@@ -178,13 +199,13 @@ class CalculatorBrain : Printable
     }
     
     func clear() {
-        opStock = [Op]()
+        opStack = [Op]()
         variableValues = [String : Double]()
     }
     
     func evaluate() -> Double? {
-        let (result, remainder) = evaluate(opStock)
-        println("\(opStock) = \(result) with \(remainder) left over")
+        let (result, remainder) = evaluate(opStack)
+        println("\(opStack) = \(result) with \(remainder) left over")
         println("DESC: " + self.description)
         return result
     }

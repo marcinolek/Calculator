@@ -9,7 +9,7 @@
 import UIKit
 
 protocol GraphViewDataSource {
-    
+    func valueForDataPoint(#point: Double) -> Double?
 }
 
 @IBDesignable
@@ -18,6 +18,8 @@ class GraphView: UIView {
     var axesDrawer = AxesDrawer(color: UIColor.blueColor())
     
     var definedOrigin: CGPoint?
+    
+    var color = UIColor.redColor()
     
     var origin: CGPoint {
         get {
@@ -45,7 +47,58 @@ class GraphView: UIView {
     override func drawRect(rect: CGRect) {
         println("origin \(origin)")
         axesDrawer.drawAxesInRect(rect, origin: origin, pointsPerUnit: scale)
+        
+        CGContextSaveGState(UIGraphicsGetCurrentContext())
+        color.set()
+        let path = UIBezierPath()
+        
+        var lastValue: Double?
+        for var x = 0.0; x < Double(rect.width); x++ {
+            if let value = dataSource?.valueForDataPoint(point: x) {
+                
+                if let ldp = lastValue {
+                    if ldp.isNormal || ldp.isZero {
+                        if let newPoint = alignedPoint(x: CGFloat(x), y: CGFloat(value), insideBounds: rect) {
+                            path.addLineToPoint(newPoint)
+                        }
+                    } else {
+                        if let newPoint = alignedPoint(x: CGFloat(x), y: CGFloat(value), insideBounds: rect) {
+                            path.moveToPoint(newPoint)
+                        }
+                    }
+                } else {
+                    if let newPoint = alignedPoint(x: CGFloat(x), y: CGFloat(value), insideBounds: rect) {
+                        path.moveToPoint(newPoint)
+                    }
+                }
+                
+                lastValue = value
+                
+                //lastDataPoint = alignedPoint(x: CGFloat(x), y: CGFloat(value), insideBounds: rect)
+                
+            }
+
+        }
+        path.stroke()
+        CGContextRestoreGState(UIGraphicsGetCurrentContext())
+        
     }
+    
+    private func alignedPoint(#x: CGFloat, y: CGFloat, insideBounds: CGRect? = nil) -> CGPoint?
+    {
+     let point = CGPoint(x: align(x), y: align(y))
+        if let permissibleBounds = insideBounds {
+            if (!CGRectContainsPoint(permissibleBounds, point)) {
+                return nil
+            }
+        }
+        return point
+    }
+    
+    private func align(coordinate: CGFloat) -> CGFloat {
+        return round(coordinate * scale) / scale
+    }
+
     
     @IBAction func handlePinch(var recognizer: UIGestureRecognizer?) {
         if let pinchGestureRecognizer = recognizer as? UIPinchGestureRecognizer {

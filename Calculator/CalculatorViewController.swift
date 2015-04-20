@@ -121,5 +121,20 @@ class CalculatorViewController: UIViewController
         userIsInTheMiddleOfTypingANumber = false
         displayValue = brain.evaluate()
     }
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let identifier = segue.identifier {
+            if(identifier == "Show Chart") {
+                
+                if let gvc = segue.destinationViewController as? GraphViewController {
+                    gvc.program = brain.program
+                    gvc.programDescription = brain.description.componentsSeparatedByString(", ").last
+                }
+                
+                
+                
+            }
+        }
+    }
 }
 
