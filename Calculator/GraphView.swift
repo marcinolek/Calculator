@@ -9,7 +9,7 @@
 import UIKit
 
 protocol GraphViewDataSource {
-    func valueForDataPoint(#point: Double) -> Double?
+    func pointForValue(#val: Double) -> CGPoint?
 }
 
 @IBDesignable
@@ -45,30 +45,49 @@ class GraphView: UIView {
     }
     
     override func drawRect(rect: CGRect) {
-        println("origin \(origin)")
+        //println("origin \(origin)")
         axesDrawer.drawAxesInRect(rect, origin: origin, pointsPerUnit: scale)
         
         CGContextSaveGState(UIGraphicsGetCurrentContext())
         color.set()
         let path = UIBezierPath()
         
-        var lastValue: Double?
-        for var x = 0.0; x < Double(rect.width); x++ {
-            if let value = dataSource?.valueForDataPoint(point: x) {
-                
+        var lastValue: CGPoint?
+        for var x = 0.0; x <= Double(rect.width); x++ {
+            //println("   x:\(x)")
+            if let value = dataSource?.pointForValue(val:x) {
+                //println("   y:\(value)")
                 if let ldp = lastValue {
-                    if ldp.isNormal || ldp.isZero {
-                        if let newPoint = alignedPoint(x: CGFloat(x), y: CGFloat(value), insideBounds: rect) {
+                    if ldp.y.isNormal || ldp.y.isZero {
+                        if let newPoint = alignedPoint(x: CGFloat(value.x), y: CGFloat(value.y), insideBounds: rect) {
                             path.addLineToPoint(newPoint)
+                            //println("drawing line to \(newPoint)")
+                        } else {
+                            if((value.x.isZero || value.x.isNormal)&&(value.y.isZero || value.y.isNormal))
+                            {
+                                path.moveToPoint(value)
+                            }
                         }
                     } else {
-                        if let newPoint = alignedPoint(x: CGFloat(x), y: CGFloat(value), insideBounds: rect) {
+                        if let newPoint = alignedPoint(x: CGFloat(value.x), y: CGFloat(value.y), insideBounds: rect) {
                             path.moveToPoint(newPoint)
+                            //println("moving line to \(newPoint)")
+                        } else {
+                            if((value.x.isZero || value.x.isNormal)&&(value.y.isZero || value.y.isNormal))
+                                {
+                                    path.moveToPoint(value)
+                            }
                         }
                     }
                 } else {
-                    if let newPoint = alignedPoint(x: CGFloat(x), y: CGFloat(value), insideBounds: rect) {
+                    if let newPoint = alignedPoint(x: CGFloat(value.x), y: CGFloat(value.y), insideBounds: rect) {
                         path.moveToPoint(newPoint)
+                        //println("moving line to \(newPoint)")
+                    } else {
+                        if((value.x.isZero || value.x.isNormal)&&(value.y.isZero || value.y.isNormal))
+                        {
+                            path.moveToPoint(value)
+                        }
                     }
                 }
                 

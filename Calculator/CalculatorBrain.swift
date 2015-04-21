@@ -138,7 +138,7 @@ class CalculatorBrain : Printable
             var remainingOps = ops
             let op = remainingOps.removeLast()
            
-            println("remaining ops: \(remainingOps.count)")
+            //println("remaining ops: \(remainingOps.count)")
             var currentDescription = desc
             switch op {
             case .Operand(let operand):
@@ -205,8 +205,8 @@ class CalculatorBrain : Printable
     
     func evaluate() -> Double? {
         let (result, remainder) = evaluate(opStack)
-        println("\(opStack) = \(result) with \(remainder) left over")
-        println("DESC: " + self.description)
+        //println("\(opStack) = \(result) with \(remainder) left over")
+        //println("DESC: " + self.description)
         return result
     }
     

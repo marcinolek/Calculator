@@ -40,9 +40,25 @@ class GraphViewController: UIViewController, GraphViewDataSource {
     
     
     
-    internal func valueForDataPoint(#point: Double) -> Double? {
-        brain.variableValues["M"] = point
-        return brain.evaluate()
+    internal func pointForValue(#val: Double) -> CGPoint? {
+        
+        var convertedVal = (val-Double(graphView.origin.x))/Double(graphView.scale)
+        //println("ppv \(convertedVal)")
+        brain.variableValues["M"] = convertedVal
+        var d = brain.evaluate()
+        if let y = d {
+            return convertPointToViewsCoordinateSystem(point: CGPoint(x: val, y: y))
+        } else {
+            return nil
+        }
+        
+    }
+    
+    private func convertPointToViewsCoordinateSystem(#point: CGPoint) -> CGPoint {
+        
+        var toRet = CGPoint(x: point.x, y: graphView.origin.y - (point.y*graphView.scale))
+        //println("converting \(point) to \(toRet)")
+        return toRet
     }
     
 }
