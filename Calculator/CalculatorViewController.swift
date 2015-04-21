@@ -26,7 +26,7 @@ class CalculatorViewController: UIViewController
             display.text = digit
             userIsInTheMiddleOfTypingANumber = true
         }
-        println("digit = \(digit)")
+        //println("digit = \(digit)")
     }
     
 

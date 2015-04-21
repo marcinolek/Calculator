@@ -46,6 +46,7 @@ class GraphViewController: UIViewController, GraphViewDataSource {
         //println("ppv \(convertedVal)")
         brain.variableValues["M"] = convertedVal
         var d = brain.evaluate()
+        //println("d = \(d)")
         if let y = d {
             return convertPointToViewsCoordinateSystem(point: CGPoint(x: val, y: y))
         } else {

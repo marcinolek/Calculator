@@ -102,12 +102,14 @@ class CalculatorBrain : Printable
         set {
             if let opSymbols = newValue as? Array<String> {
                 var newOpStack = [Op]()
+                var numberFormatter = NSNumberFormatter()
+                numberFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
                 for opSymbol in opSymbols {
                     if let op = knownOps[opSymbol] {
                         newOpStack.append(op)
                     } else if let variable = variableValues[opSymbol] {
                         newOpStack.append(.Variable(opSymbol))
-                    } else if let operant = NSNumberFormatter().numberFromString(opSymbol)?.doubleValue {
+                    } else if let operant = numberFormatter.numberFromString(opSymbol)?.doubleValue {
                         newOpStack.append(.Operand(operant))
                     }
                 }
